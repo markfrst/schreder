@@ -88,8 +88,5 @@ func LoadEnv() (string, string, string) {
 }
 
 func Access(c tgbotapi.Chat, wl string) bool {
-	if string(c.ID) == wl {
-		return true
-	}
-	return false
+	return string(c.ID) == wl
 }
