@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	StorePath, Token := LoadEnv()
+	StorePath, Token, WhiteList := LoadEnv()
 
 	bot, err := tgbotapi.NewBotAPI(Token)
 	if err != nil {
@@ -27,6 +27,10 @@ func main() {
 	updates, err := bot.GetUpdatesChan(u)
 
 	for update := range updates {
+		if !Access(*update.Message.Chat, WhiteList) {
+			continue
+		}
+
 		if update.Message.Document == nil { // ignore any non-Message Updates
 			continue
 		}
@@ -72,11 +76,20 @@ func DownloadFile(filepath string, url string) error {
 }
 
 // LoadEnv load env vars from .env
-func LoadEnv() (string, string) {
+func LoadEnv() (string, string, string) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	return os.Getenv("STORE_PATH"), os.Getenv("TELEGRAM_TOKEN")
+	whiteList := os.Getenv("WHITE_LIST_IDS")
+
+	return os.Getenv("STORE_PATH"), os.Getenv("TELEGRAM_TOKEN"), whiteList
+}
+
+func Access(c tgbotapi.Chat, wl string) bool {
+	if string(c.ID) == wl {
+		return true
+	}
+	return false
 }
