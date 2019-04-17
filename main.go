@@ -55,7 +55,7 @@ func DownloadFile(filepath string, url string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
-			return err
+		return err
 	}
 
 	log.Printf("resp: %+v", resp)
@@ -64,7 +64,7 @@ func DownloadFile(filepath string, url string) error {
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
-			return err
+		return err
 	}
 	log.Printf("out: %+v", out)
 
